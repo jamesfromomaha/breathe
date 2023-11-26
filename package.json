@@ -11,12 +11,9 @@
     "watch": "webpack --watch",
     "serve": "webpack serve"
   },
-  "repository": "git+ssh://git@github.com/bear-bones/breathe.git",
+  "repository": "https://github.com/jamesfromomaha/breathe.git",
   "author": "James White <james@thewhites.co>",
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/bear-bones/breathe/issues"
-  },
   "homepage": "https://github.com/bear-bones/breathe#readme",
   "devDependencies": {
     "@babel/core": "^7.17.8",
@@ -24,7 +21,6 @@
     "@webpack-cli/generators": "^2.4.2",
     "babel-loader": "^8.2.4",
     "html-webpack-plugin": "^5.5.0",
-    "jasmine": "^4.0.2",
     "node-sass": "^7.0.1",
     "prettier": "^2.6.1",
     "sass": "^1.49.11",

@@ -1,0 +1,13 @@
+<html>
+  <head>
+    <title>Test page</title>
+  </head>
+  <body>
+    <h1>Html Includes</h1>
+    <p>about to include html as a document</p>
+    <include-html rel="loadme.html" action="before" selector="#the-anchor"></include-html>
+    <p>it should be loaded right before the next paragraph</p>
+    <p id="the-anchor">before this one</p>
+    <script src="include-html.js"></script>
+  </body>
+</html>
