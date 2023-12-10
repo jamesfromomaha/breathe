@@ -1,23 +1,7 @@
-# Breathe
-
-## Why
-
-I am very opinionated. Maybe you can identify with that; maybe not. Regardless,
-I am annoyed by front-end frameworks' obsession with turning **everything**
-into javascript. It does not make sense to parse HTML and CSS, load resources,
-and render a web app entirely in JS.
-
-This is because very smart people already created free cross-platform software
-that does all of that, written in C compiled directly against the OS libraries,
-and it has twenty years' worth of agressive optimization.
-
-I feel like we all need a nice big step back. Our code doesn't need to
-micromanage everything. Let's let go and trust the tools that we have on hand.
-Let your app breathe. This is clever, see, because "breathe" is a reference to
-the name of the project, and
+# `esc`
 
 ## tl;dr
-Breathe is a hands-off web application framework that uses HTML markup and
+`esc` is a hands-off web application framework that uses HTML markup and
 browser APIs, with a few dabs of JS to glue everything together.
 
 ## Features
