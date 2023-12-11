@@ -7,19 +7,20 @@ const PORT = 3000;
 const server = http.createServer();
 server
   .on('request', async function (req, res) {
+    const resource = req.url.split('/').pop();
     let file;
-    switch (req.url.split('/').pop()) {
+    switch (resource) {
     case 'index.html':
       file = { path: 'cypress/support/index.html', mime: 'text/html' };
       break;
-    case 'loadme.html':
-      file = { path: 'cypress/support/loadme.html', mime: 'text/html' };
+    case 'esc.js':
+      file = { path: 'src/esc.js', mime: 'text/javascript' };
       break;
-    case 'include-html.js':
-      file = { path: 'build/include-html.js', mime: 'text/javascript' };
+    case 'tag.js':
+      file = { path: 'src/tag/index.js', mime: 'text/javascript' };
       break;
     default:
-      console.error(`'${req.url}' not found:\n${Object.keys(req).join('\n')}`);
+      console.error(`'${req.url}' ('${resource}') not found:\n${Object.keys(req).join('\n')}`);
       res.statusCode = 404;
       res.setHeader('Content-Type', 'text/plain');
       return res.end('Not found');
