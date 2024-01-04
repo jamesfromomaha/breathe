@@ -7,12 +7,16 @@
   "private": false,
   "repository": "https://github.com/jamesfromomaha/esc.git",
   "main": "src/esc.js",
+  "type": "module",
   "scripts": {
     "cy": "nohup cypress open &",
-    "srv": "nohup node cypress/support/server.js &"
+    "srv": "nohup node cypress/support/server.js &",
+    "test": "mocha"
   },
   "dependencies": {
-    "@ungap/custom-elements": "latest"
+    "@ungap/custom-elements": "latest",
+    "chai": "^5.0.0",
+    "mocha": "^10.2.0"
   },
   "devDependencies": {
     "cypress": "latest"
