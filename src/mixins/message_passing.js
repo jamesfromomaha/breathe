@@ -67,7 +67,9 @@ export function message_passing(prototype, cls) {
     cls._bus = new Map();
     prototype._bus = cls._bus;
   }
-  prototype.pub = pub;
-  prototype.sub = sub;
-  prototype.unsub = unsub;
+  return {
+    pub: prototype.pub = pub.bind(prototype),
+    sub: prototype.sub = sub.bind(prototype),
+    unsub: prototype.unsub = unsub.bind(prototype),
+  };
 };

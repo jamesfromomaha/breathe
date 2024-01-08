@@ -1,38 +1,58 @@
+import { mixin } from './mixin';
 import { message_passing } from './message_passing';
 
-const compare = ({ key: a }, { key: b }) => +(a > b) || -(b > a) || 0;
+const default_compare = function (
+  { [this._compare_key]: a },
+  { [this._compare_key]: b }
+) {
+  const result = +(a > b) || -(b > a) || 0;
+  return this._ascending ? result : -result;
+}
 
-export function sortable(cls, { pub, sub, unsub }) {
-  const { pub, sub, unsub } = message_passing(cls);
-  const { prototype } = cls;
+export const sortable = mixin(proto, cls) {
+  const { pub, sub } = message_passing(proto, cls);
 
   sub('custom-element', 'connect', function () {
-    this._compare = compare;
+    this._compare = default_compare;
+    this._compare_key = 'key';
     this._ascending = true;
   });
 
-  sub('custom-element', 'attribute', function (name, _, value) {
-    switch (name) {
-    case 'asc':
-      this.asc = !!value;
-      if (this.has_collection) this.order_collection();
-      return 'cancel';
-    case 'compare':
-      let ok = false;
-      if (ok = (name === 'asc')) this.asc = !!value;
-      else if (ok = (!value || value === 'default'))
-        this._compare = default_compare;
-      else if (ok = (typeof this[value] === 'function'))
-        this._compare = this[value];
-      else
-        console.error(`Instance method '${value}' is not available`);
-      if (ok && this.has_collection) this.sort_collection();
-      return 'cancel';
-    }
+  sub('custom-element', 'attribute', function (name, previous, value) {
+    if (previous !== value)
+      switch (name) {
+      case 'asc':
+        const new_asc = !!value;
+        if (new_asc !== this._ascending) {
+          this._ascending = new_asc;
+          this.sort();
+        }
+        return 'done';
+      case 'compare':
+        let new_compare = this._compare;
+        if (!value || value === 'default') new_compare = default_compare;
+        else if (typeof this[value] === 'function') new_compare = this[value];
+        else console.error(`There is no instance method '${value}'`);
+        if (new_compare !== this._compare) {
+          this._compare = new_compare;
+          this.sort();
+        }
+        return 'done';
+      case 'compare-key':
+        const new_key = value ?? 'key';
+        if (new_key !== this._compare_key) {
+          this._compare_key = new_key;
+          if (this._collection) this.sort();
+        }
+        return 'done';
+      }
   });
 
-  pro.resort = function () {
-    
+  proto.sort = function (subject) {
+    subject ||= this._collection;
+    subject.sort(this._compare.bind(this));
+    pub('sortable', 'sort', subject);
+    return this;
   };
 
   return cls;
