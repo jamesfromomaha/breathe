@@ -71,7 +71,7 @@ export const collection = mixin(function (proto, cls) {
   };
 
   // add/update for sortable collections
-  function update_collection(self, items, replace) {
+  function updater(self, items, replace) {
     items = self.sort(items);
     const patch = make_patch(self._collection);
     const len = self._collection.length;
@@ -89,24 +89,24 @@ export const collection = mixin(function (proto, cls) {
     return patch.result();
   }
 
-  proto.collection_add = function (items) {
+  proto.add_to_collection = function (items) {
     const len = this._collection.length;
     let patch = [{ type: 'add', oldPos: len, newPos: len, items }];
-    if (this._compare) patch = update_collection(this, items);
+    if (this._compare) patch = updater(this, items);
     else this._collection.push(...items);
-    pub('collection', 'update', { patch });
+    if (patch.length) pub('collection', 'update', { patch });
     return this;
   };
 
-  proto.collection_update = function (items) {
+  proto.update_collection = function (items) {
     let patch;
     if (this._compare) {
-      patch = update_collection(this, items, true);
+      patch = updater(this, items, true);
     } else {
       patch = diff.getPatch(this._collection, items, default_compare)
       this._collection = diff.applyPatch(this._collection, patch);
     }
-    pub('collection', 'update', { patch });
+    if (patch.length) pub('collection', 'update', { patch });
     return this;
   };
 
