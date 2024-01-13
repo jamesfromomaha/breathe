@@ -32,7 +32,8 @@ export const sortable = mixin(proto, cls) {
         let new_compare = this._compare;
         if (!value || value === 'default') new_compare = default_compare;
         else if (typeof this[value] === 'function') new_compare = this[value];
-        else console.error(`There is no instance method '${value}'`);
+        else if (typeof window[value] === 'function') new_compare = window[value];
+        else console.error(`There is no method '${value}' in scope`);
         if (new_compare !== this._compare) {
           this._compare = new_compare;
           this.sort();
