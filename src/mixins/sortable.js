@@ -2,19 +2,19 @@ import { mixin } from './mixin';
 import { message_passing } from './message_passing';
 
 const default_compare = function (
-  { [this._compare_key]: a },
-  { [this._compare_key]: b }
+  { [this._collection_key]: a },
+  { [this._collection_key]: b }
 ) {
   const result = +(a > b) || -(b > a) || 0;
   return this._ascending ? result : -result;
 }
 
+export const sortable_attributes = ['asc', 'compare']
 export const sortable = mixin(proto, cls) {
   const { pub, sub } = message_passing(proto, cls);
 
   sub('custom-element', 'connect', function () {
     this._compare = default_compare;
-    this._compare_key = 'key';
     this._ascending = true;
   });
 
@@ -37,13 +37,6 @@ export const sortable = mixin(proto, cls) {
         if (new_compare !== this._compare) {
           this._compare = new_compare;
           this.sort();
-        }
-        return 'done';
-      case 'compare-key':
-        const new_key = value ?? 'key';
-        if (new_key !== this._compare_key) {
-          this._compare_key = new_key;
-          if (this._collection) this.sort();
         }
         return 'done';
       }

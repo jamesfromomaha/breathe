@@ -42,10 +42,25 @@ const make_patch(collection) {
   };
 }
 
+export const collection_attributes = ['key']
 export const collection = mixin(function (proto, cls) {
   const { pub, sub } = message_passing(proto, cls);
 
-  sub('custom-element', 'connect', function () { this._collection = [] });
+  sub('custom-element', 'connect', function () {
+    this._collection_key = 'key';
+    this._collection = [];
+  });
+
+  sub('custom-element', 'attribute', function (name, previous, value) {
+    if (previous !== value && name === 'key') {
+      const new_key = value ?? 'key';
+      if (new_key !== this._collection_key) {
+        this._collection_key = new_key;
+        if (this._compare) this.sort();
+      }
+      return 'done';
+    }
+  }
   
   proto.get_collection = function () { return this._collection };
   proto.set_collection = function (items) {
