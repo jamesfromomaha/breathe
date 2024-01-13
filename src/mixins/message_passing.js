@@ -68,8 +68,8 @@ export function message_passing(prototype, cls) {
     prototype._bus = cls._bus;
   }
   return {
-    pub: prototype.pub = pub.bind(prototype),
-    sub: prototype.sub = sub.bind(prototype),
-    unsub: prototype.unsub = unsub.bind(prototype),
+    pub: prototype.pub ||= pub.bind(prototype),
+    sub: prototype.sub ||= sub.bind(prototype),
+    unsub: prototype.unsub ||= unsub.bind(prototype),
   };
 };
