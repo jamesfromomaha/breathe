@@ -1,11 +1,10 @@
 import * as diff from 'fast-array-diff';
 import { mixin } from './mixin';
 import { message_passing } from './message_passing';
-import { default_compare } from './sortable';
 
 const compare = ({ key: a }, { key: b }) => a === b;
 
-const make_patch(collection) {
+function make_patch(collection) {
   const patch = [];
   let offset = 0, type, l1, l2;
   return {
@@ -44,7 +43,7 @@ const make_patch(collection) {
   };
 }
 
-export const collection_attributes = ['key']
+export const collection_attributes = ['key'];
 export const collection = mixin(function (proto, cls) {
   const { pub, sub } = message_passing(proto, cls);
 
@@ -62,7 +61,7 @@ export const collection = mixin(function (proto, cls) {
       }
       return 'done';
     }
-  }
+  });
   
   proto.get_collection = function () { return this._collection };
   proto.set_collection = function (items) {
@@ -105,7 +104,7 @@ export const collection = mixin(function (proto, cls) {
     if (this._compare) {
       patch = updater(this, items, true);
     } else {
-      patch = diff.getPatch(this._collection, items, default_compare)
+      patch = diff.getPatch(this._collection, items, compare)
       this._collection = diff.applyPatch(this._collection, patch);
     }
     if (patch.length) pub('collection', 'update', { patch });
@@ -113,4 +112,4 @@ export const collection = mixin(function (proto, cls) {
   };
 
   return cls;
-};
+});

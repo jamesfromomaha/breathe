@@ -9,7 +9,8 @@
   "main": "src/esc.js",
   "type": "module",
   "scripts": {
-    "cy": "nohup cypress open &",
+    "build": "rollup --config config/rollup.config.js",
+    "cy": "nohup cypress open --config-file config/cypress.config.js &",
     "srv": "nohup node cypress/support/server.js &",
     "test": "mocha"
   },
@@ -20,6 +21,7 @@
   "devDependencies": {
     "chai": "latest",
     "cypress": "latest",
-    "mocha": "latest"
+    "mocha": "latest",
+    "rollup": "latest"
   }
 }

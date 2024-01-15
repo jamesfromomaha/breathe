@@ -10,7 +10,7 @@ const default_compare = function (
 }
 
 export const sortable_attributes = ['asc', 'compare']
-export const sortable = mixin(proto, cls) {
+export const sortable = mixin(function (proto, cls) {
   const { pub, sub } = message_passing(proto, cls);
 
   sub('custom-element', 'connect', function () {
@@ -50,4 +50,4 @@ export const sortable = mixin(proto, cls) {
   };
 
   return cls;
-};
+});
