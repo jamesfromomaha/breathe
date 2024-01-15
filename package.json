@@ -15,10 +15,11 @@
   },
   "dependencies": {
     "@ungap/custom-elements": "latest",
-    "chai": "^5.0.0",
-    "mocha": "^10.2.0"
+    "fast-array-diff": "latest"
   },
   "devDependencies": {
-    "cypress": "latest"
+    "chai": "latest",
+    "cypress": "latest",
+    "mocha": "latest"
   }
 }

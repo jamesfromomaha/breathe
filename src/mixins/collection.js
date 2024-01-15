@@ -31,8 +31,10 @@ const make_patch(collection) {
       } else {
         type = 'replace';
         const newPos = oldPos + offset;
-        patch.push(l2 = { type: 'remove', oldPos, newPos, length: 1 });
-        patch.push(l1 = { type: 'add', oldPos, newPos, items: [item] });
+        patch.push(
+          l2 = { type: 'remove', oldPos, newPos, length: 1, replace: true },
+          l1 = { type: 'add', oldPos, newPos, items: [item], replace: true }
+        );
       }
       collection[index] = item;
     },
