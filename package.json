@@ -22,6 +22,7 @@
     "chai": "latest",
     "cypress": "latest",
     "mocha": "latest",
-    "rollup": "latest"
+    "rollup": "latest",
+    "@rollup/plugin-node-resolve": "latest"
   }
 }

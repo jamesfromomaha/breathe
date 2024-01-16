@@ -1,6 +1,6 @@
 export function mixin(cb) {
   return function (cls) {
-    const { __proto__: proto } = cls._instance ||= new cls();
+    const { __proto__: proto } = cls._instance ||= cls.prototype || new cls();
     if (!cls._destructors) {
       cls._destructors = [];
       proto.destructor = function () {

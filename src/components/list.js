@@ -1,5 +1,5 @@
+import { EscElement } from '/esc';
 import { collection, collection_attributes } from '../mixins/collection';
-import { message_passing } from '../mixins/message_passing';
 import { sortable, sortable_attributes } from '../mixins/sortable';
 
 
@@ -8,7 +8,7 @@ const operations = (list) => ({
     () => {
       const frag = document.createDocumentFragment();
       for (const item of items) {
-        const node = document.createElement('esc-item');
+        const node = document.createElement('esc-list-item');
         node.appendChild(document.createElement('slot'));
         node.setAttribute('id', item.key);
         node.update_data(item);
@@ -29,7 +29,7 @@ const operations = (list) => ({
 });
 
 
-export class List extends sortable(collection(HTMLUListElement)) {
+export class List extends sortable(collection(EscElement)) {
   static observedAttributes = [
     ...collection_attributes,
     ...sortable_attributes,
@@ -40,10 +40,9 @@ export class List extends sortable(collection(HTMLUListElement)) {
 
   constructor() {
     super();
-    const template = document.getElementById('esc-list-template').content;
+    const template = document.getElementById('esc-list-template')?.content;
     this._shadow = this.attachShadow({ mode: "open" });
-    if (template) this._shadow.appendChild(template.cloneNode(true));
-    else console.error('List template not loaded');
+    if (this._template = !!template) this._shadow.appendChild(template.cloneNode(true));
     this.sub('collection', 'update', this.update_dom);
     this.sub('sortable', 'sort', this.update_dom);
     this.sub('controller', 'data', this.update_data);
@@ -52,13 +51,18 @@ export class List extends sortable(collection(HTMLUListElement)) {
   attributeChangedCallback(name, prev, value) {
     if (prev !== value && name === 'items')
       try {
-        this.update_data({ action: 'set', items: JSON.parse(value || '[]') });
+        this.set_collection({ action: 'set', items: JSON.parse(value || '[]') });
       } catch (e) {
         console.error(e);
       }
   }
 
   connectedCallback() {
+    if (!this._template) {
+      const template = document.getElementById('esc-list-template')?.content;
+      if (template) this._shadow.appendChild(template.cloneNode(true));
+      else console.error('List template not loaded');
+    }
   }
 
   disconnectedCallback() {
@@ -84,9 +88,10 @@ export class List extends sortable(collection(HTMLUListElement)) {
     }
   }
 }
+customElements.define('esc-list', List);
 
 
-class ListItem extends HTMLLiElement {
+class ListItem extends HTMLElement {
   static observedAttributes = ['data'];
 
   _data = {};
@@ -139,3 +144,4 @@ class ListItem extends HTMLLiElement {
     if (changes.length) update_dom({ changes });
   }
 }
+customElements.define('esc-list-item', ListItem);

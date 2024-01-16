@@ -1,2 +1,3 @@
 export * from './mixins/main'
-export * from './list/main';
+export * from './components/esc';
+export * from './components/list';

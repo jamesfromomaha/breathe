@@ -6,6 +6,7 @@ const methods = {
 }
 
 function wrap_method(prototype, name) {
+  console.debug(prototype);
   const method = methods[name] && prototype[methods[name]];
   if (typeof method !== 'function') 
     return console.error(`There is no method for an event named '${name}'`);
