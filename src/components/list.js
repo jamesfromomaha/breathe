@@ -3,17 +3,18 @@ import { collection, collection_attributes } from '../mixins/collection';
 import { sortable, sortable_attributes } from '../mixins/sortable';
 
 
+function item2li(item) {
+  const node = document.createElement('esc-list-item');
+  node.appendChild(document.createElement('slot'));
+  node.setAttribute('id', item.key);
+  node.update_data(item);
+}
+
 const operations = (list) => ({
   insert: ({ items, newPos }) =>
     () => {
       const frag = document.createDocumentFragment();
-      for (const item of items) {
-        const node = document.createElement('esc-list-item');
-        node.appendChild(document.createElement('slot'));
-        node.setAttribute('id', item.key);
-        node.update_data(item);
-        frag.appendChild(node);
-      }
+      for (const item of items) frag.appendChild(item2li(item));
       list.insertBefore(frag, list.children[newPos]);
     },
   remove: ({ items, length, newPos }) =>
@@ -40,47 +41,79 @@ export class List extends sortable(collection(EscElement)) {
 
   constructor() {
     super();
-    const template = document.getElementById('esc-list-template')?.content;
+    console.debug('constructor');
     this._shadow = this.attachShadow({ mode: "open" });
-    if (this._template = !!template) this._shadow.appendChild(template.cloneNode(true));
+    // TODO move all the template chicanery into a method on the base class
+    const template = document.getElementById('esc-list-template')?.content;
+    this._template = !!template;
+    if (template) {
+      this._shadow.appendChild(template.cloneNode(true));
+      this.update_dom({ items: this._collection });
+    }
+    this.sub('controller', 'data', this.update_data);
+    this.sub('collection', 'set', this.update_dom);
     this.sub('collection', 'update', this.update_dom);
     this.sub('sortable', 'sort', this.update_dom);
-    this.sub('controller', 'data', this.update_data);
   }
 
   attributeChangedCallback(name, prev, value) {
+    console.debug('attr');
     if (prev !== value && name === 'items')
       try {
-        this.set_collection({ action: 'set', items: JSON.parse(value || '[]') });
+        this.update_data({ action: 'set', items: JSON.parse(value || '[]') });
       } catch (e) {
         console.error(e);
       }
   }
 
   connectedCallback() {
+    console.debug('connected');
     if (!this._template) {
       const template = document.getElementById('esc-list-template')?.content;
-      if (template) this._shadow.appendChild(template.cloneNode(true));
-      else console.error('List template not loaded');
+      this._template = !!template;
+      if (template) {
+        this._shadow.appendChild(template.cloneNode(true));
+        this.update_dom({ items: this._collection });
+      } else {
+        setTimeout((function () {
+          const template = document.getElementById('esc-list-template')?.content;
+          this._template = !!template;
+          if (template) {
+            this._shadow.appendChild(template.cloneNode(true));
+            this.update_dom({ items: this._collection });
+          } else {
+            console.error('List template not loaded');
+          }
+        }).bind(this), 0);
+      }
     }
   }
 
   disconnectedCallback() {
-    this.destructor();
+    console.debug('disconnected');
   }
 
-  update_dom({ patch }) {
-    const { insert, replace, update } = operations(this);
-    const updates = new Array(patch.length);
-    for (const step of patch)
-      if (step.type === 'add')
-        updates.push(step.update ? update(step) : insert(step));
-      else if (step.type === 'remove' && !step.update)
-        updates.push(remove(step));
-    for (const update of updates) update();
+  update_dom({ items, patch }) {
+    console.debug('update_dom');
+    if (!this._template) return;
+    if (items) {
+      items = items.map(item2li);
+      this.textContent = '';
+      this.append(...items);
+    } else if (patch) {
+      const { insert, replace, update } = operations(this);
+      const updates = new Array(patch.length);
+      for (const step of patch)
+        if (step.type === 'add')
+          updates.push(step.update ? update(step) : insert(step));
+        else if (step.type === 'remove' && !step.update)
+          updates.push(remove(step));
+      for (const update of updates) update();
+    }
   }
 
   update_data({ action, items }) {
+    console.debug('update_data');
     switch (action) {
     case 'set': return this.set_collection(items);
     case 'add': return this.add_to_collection(items);

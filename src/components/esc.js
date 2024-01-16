@@ -24,22 +24,22 @@ export class EscElement extends HTMLElement {
 
   adoptedCallback() {
     this.pub('custom-element', 'pre-adopt');
-    setImmediate(() => this.pub('custom-element', 'post-adopt'));
+    setTimeout(() => this.pub('custom-element', 'post-adopt'), 0);
   }
   connectedCallback() {
     this.pub('custom-element', 'pre-connect');
-    setImmediate(() => this.pub('custom-element', 'post-connect'));
+    setTimeout(() => this.pub('custom-element', 'post-connect'), 0);
   }
   disconnectedCallback() {
     this.pub('custom-element', 'pre-disconnect');
-    setImmediate(() => {
+    setTimeout(() => {
       this.pub('custom-element', 'post-disconnect')
       this.destructor();
-    });
+    }, 0);
   }
   attributeChangedCallback(name, prev, value) {
     this.pub('custom-element', 'pre-attribute', { name, prev, value });
-    setImmediate(() => this.pub('custom-element', 'post-attribute'));
+    setTimeout(() => this.pub('custom-element', 'post-attribute'), 0);
   }
 
   destructor() {
