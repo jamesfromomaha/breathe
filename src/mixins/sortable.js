@@ -10,12 +10,12 @@ export const sortable_attributes = ['asc', 'compare']
 
 
 export const sortable = function (cls) {
-  sub('custom-element', 'connect', function () {
+  cls.sub('custom-element', 'connect', function () {
     this._compare = default_compare;
     this._ascending = true;
   });
 
-  sub('custom-element', 'attribute', function (name, previous, value) {
+  cls.sub('custom-element', 'attribute', function (name, previous, value) {
     if (previous !== value)
       switch (name) {
       case 'asc':
@@ -42,7 +42,7 @@ export const sortable = function (cls) {
   cls.prototype.sort = function (subject) {
     subject ||= this._collection;
     subject.sort(this._compare.bind(this));
-    pub('sortable', 'sort', subject);
+    this.pub('sortable', 'sort', subject);
     return this;
   };
 

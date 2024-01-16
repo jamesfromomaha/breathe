@@ -46,12 +46,12 @@ function make_patch(collection) {
 export const collection_attributes = ['key'];
 
 export const collection = function (cls) {
-  sub('custom-element', 'connect', function () {
+  cls.sub('custom-element', 'connect', function () {
     this._collection_key = 'key';
     this._collection = [];
   });
 
-  sub('custom-element', 'attribute', function (name, previous, value) {
+  cls.sub('custom-element', 'attribute', function (name, previous, value) {
     if (previous !== value && name === 'key') {
       const new_key = value ?? 'key';
       if (new_key !== this._collection_key) {
@@ -66,7 +66,7 @@ export const collection = function (cls) {
   cls.prototype.set_collection = function (items) {
     this._collection = items || [];
     if (this._compare) this.sort();
-    pub('collection', 'set', { items });
+    this.pub('collection', 'set', { items });
     return this;
   };
 
@@ -94,7 +94,7 @@ export const collection = function (cls) {
     let patch = [{ type: 'add', oldPos: len, newPos: len, items }];
     if (this._compare) patch = updater(this, items);
     else this._collection.push(...items);
-    if (patch.length) pub('collection', 'update', { patch });
+    if (patch.length) this.pub('collection', 'update', { patch });
     return this;
   };
 
@@ -106,7 +106,7 @@ export const collection = function (cls) {
       patch = diff.getPatch(this._collection, items, compare)
       this._collection = diff.applyPatch(this._collection, patch);
     }
-    if (patch.length) pub('collection', 'update', { patch });
+    if (patch.length) this.pub('collection', 'update', { patch });
     return this;
   };
 
