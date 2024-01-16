@@ -1,6 +1,5 @@
 import * as diff from 'fast-array-diff';
-import { mixin } from './mixin';
-import { message_passing } from './message_passing';
+
 
 const compare = ({ key: a }, { key: b }) => a === b;
 
@@ -43,10 +42,10 @@ function make_patch(collection) {
   };
 }
 
-export const collection_attributes = ['key'];
-export const collection = mixin(function (proto, cls) {
-  const { pub, sub } = message_passing(proto, cls);
 
+export const collection_attributes = ['key'];
+
+export const collection = function (cls) {
   sub('custom-element', 'connect', function () {
     this._collection_key = 'key';
     this._collection = [];
@@ -63,8 +62,8 @@ export const collection = mixin(function (proto, cls) {
     }
   });
   
-  proto.get_collection = function () { return this._collection };
-  proto.set_collection = function (items) {
+  cls.prototype.get_collection = function () { return this._collection };
+  cls.prototype.set_collection = function (items) {
     this._collection = items || [];
     if (this._compare) this.sort();
     pub('collection', 'set', { items });
@@ -90,7 +89,7 @@ export const collection = mixin(function (proto, cls) {
     return patch.result();
   }
 
-  proto.add_to_collection = function (items) {
+  cls.prototype.add_to_collection = function (items) {
     const len = this._collection.length;
     let patch = [{ type: 'add', oldPos: len, newPos: len, items }];
     if (this._compare) patch = updater(this, items);
@@ -99,7 +98,7 @@ export const collection = mixin(function (proto, cls) {
     return this;
   };
 
-  proto.update_collection = function (items) {
+  cls.prototype.update_collection = function (items) {
     let patch;
     if (this._compare) {
       patch = updater(this, items, true);
@@ -112,4 +111,4 @@ export const collection = mixin(function (proto, cls) {
   };
 
   return cls;
-});
+};

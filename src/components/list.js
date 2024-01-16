@@ -1,4 +1,4 @@
-import { EscElement } from '/esc';
+import { EscElement } from './esc';
 import { collection, collection_attributes } from '../mixins/collection';
 import { sortable, sortable_attributes } from '../mixins/sortable';
 
